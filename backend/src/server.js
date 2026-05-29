@@ -1,5 +1,8 @@
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
+const uploadRoutes = require("./routes/uploadRoutes");
 
 const app = express();
 
@@ -20,6 +23,8 @@ app.get("/health", (req, res) => {
     status: "Server healthy",
   });
 });
+
+app.use("/api/upload", uploadRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
