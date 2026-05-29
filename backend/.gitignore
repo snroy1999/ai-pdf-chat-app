@@ -1,3 +1,5 @@
-node_modules
+hg.txt
 .env
-uploads
+.env.local
+node_modules/
+uploads/

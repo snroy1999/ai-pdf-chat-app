@@ -35,30 +35,23 @@ const uploadPdf = async (req, res) => {
 
     // Create vectors
     const vectors = chunks.map((chunk, indexNumber) => ({
-      id: `chunk-${Date.now()}-${indexNumber}`,
-      values: generateDummyVector(),
-      metadata: {
-        text: chunk.substring(0, 1000), // keep metadata small
-      },
-    }));
+          id: `chunk-${Date.now()}-${indexNumber}`,
+          values: generateDummyVector(),
+          metadata: {
+             text: chunk.substring(0, 1000),
+          },
+        }));
 
+await index.upsert(vectors);
     console.log("VECTORS COUNT:", vectors.length);
     console.log("VECTOR LENGTH:", vectors[0].values.length);
 
     // TEST WITH A SINGLE VECTOR FIRST
-    await index.upsert([
-      {
-        id: "test-vector",
-        values: Array(384).fill(0.5),
-        metadata: {
-          text: "test",
-        },
-      },
-    ]);
+    await index.upsert(vectors);
 
     return res.status(200).json({
       success: true,
-      message: "Pinecone test vector stored successfully",
+      message: "Chunks stored in Pinecone",
       totalChunks: chunks.length,
     });
   } catch (error) {
