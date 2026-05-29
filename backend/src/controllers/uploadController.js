@@ -1,8 +1,9 @@
+const { generateEmbedding } = require("../services/embeddingService");
 const { extractTextFromPDF } = require("../services/pdfService");
 const chunkText = require("../utils/chunkText");
 
 const index = require("../services/pineconeService");
-const generateDummyVector = require("../utils/dummyEmbedding");
+// const generateDummyVector = require("../utils/dummyEmbedding");
 
 const uploadPdf = async (req, res) => {
   try {
@@ -34,13 +35,25 @@ const uploadPdf = async (req, res) => {
     }
 
     // Create vectors
-    const vectors = chunks.map((chunk, indexNumber) => ({
-          id: `chunk-${Date.now()}-${indexNumber}`,
-          values: generateDummyVector(),
-          metadata: {
-             text: chunk.substring(0, 1000),
-          },
-        }));
+    const vectors = [];
+
+    for (let i = 0; i < chunks.length; i++) {
+      console.log(
+        `Generating embedding ${i + 1}/${chunks.length}`
+    );
+
+    const embedding = await generateEmbedding(
+      chunks[i]
+   );
+
+   vectors.push({
+    id: `chunk-${Date.now()}-${i}`,
+    values: embedding,
+    metadata: {
+      text: chunks[i].substring(0, 1000),
+    },
+  });
+}
 
 await index.upsert(vectors);
     console.log("VECTORS COUNT:", vectors.length);

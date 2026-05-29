@@ -1,24 +1,31 @@
-const axios = require("axios");
+const { pipeline } = require("@xenova/transformers");
 
-const generateEmbedding = async (text) => {
-  try {
-    const response = await axios.post(
-      "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2",
-      {
-        inputs: text,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.HF_TOKEN}`,
-        },
-      }
+let extractor = null;
+
+const getExtractor = async () => {
+  if (!extractor) {
+    console.log("Loading embedding model...");
+    
+    extractor = await pipeline(
+      "feature-extraction",
+      "Xenova/all-MiniLM-L6-v2"
     );
 
-    return response.data;
-  } catch (error) {
-    console.error(error.response?.data || error.message);
-    throw new Error("Embedding generation failed");
+    console.log("Embedding model loaded.");
   }
+
+  return extractor;
+};
+
+const generateEmbedding = async (text) => {
+  const model = await getExtractor();
+
+  const output = await model(text, {
+    pooling: "mean",
+    normalize: true,
+  });
+
+  return Array.from(output.data);
 };
 
 module.exports = {

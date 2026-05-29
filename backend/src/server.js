@@ -3,11 +3,12 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const uploadRoutes = require("./routes/uploadRoutes");
-
+const chatRoutes = require("./routes/chatRoutes");
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use("/api/chat", chatRoutes);
 
 const PORT = 5000;
 
