@@ -17,12 +17,12 @@ const uploadPdf = async (req, res) => {
     // Extract text from PDF
     const extractedText = await extractTextFromPDF(filePath);
 
-    console.log("TEXT LENGTH:", extractedText.length);
+    // console.log("TEXT LENGTH:", extractedText.length);
 
     // Split into chunks
     const chunks = chunkText(extractedText);
 
-    console.log("TOTAL CHUNKS:", chunks.length);
+    // console.log("TOTAL CHUNKS:", chunks.length);
 
     if (chunks.length === 0) {
       return res.status(400).json({
@@ -35,11 +35,11 @@ const uploadPdf = async (req, res) => {
     const vectors = [];
 
     for (let i = 0; i < chunks.length; i++) {
-      console.log(`Generating embedding ${i + 1}/${chunks.length}`);
+      // console.log(`Generating embedding ${i + 1}/${chunks.length}`);
 
       const embedding = await generateEmbedding(chunks[i]);
 
-      console.log(`Embedding generated for chunk ${i + 1}`);
+      // console.log(`Embedding generated for chunk ${i + 1}`);
 
       vectors.push({
         id: `chunk-${Date.now()}-${i}`,
@@ -50,13 +50,13 @@ const uploadPdf = async (req, res) => {
       });
     }
 
-    console.log("VECTORS COUNT:", vectors.length);
-    console.log("VECTOR LENGTH:", vectors[0].values.length);
+    // console.log("VECTORS COUNT:", vectors.length);
+    // console.log("VECTOR LENGTH:", vectors[0].values.length);
 
     // Store in Pinecone
     await index.upsert(vectors);
 
-    console.log("PINECONE UPSERT SUCCESS");
+    // console.log("PINECONE UPSERT SUCCESS");
 
     return res.status(200).json({
       success: true,

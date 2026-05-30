@@ -20,8 +20,8 @@ async function test() {
       },
     ]);
 
-    console.log("UPSERT SUCCESS");
-    console.log(result);
+    // console.log("UPSERT SUCCESS");
+    // console.log(result);
   } catch (error) {
     console.error(error);
   }

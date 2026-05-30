@@ -5,7 +5,7 @@ async function test() {
     "What is data science?"
   );
 
-  console.log("Dimensions:", vector.length);
+  // console.log("Dimensions:", vector.length);
 }
 
 test();
