@@ -1,9 +1,7 @@
 const { generateEmbedding } = require("../services/embeddingService");
 const { extractTextFromPDF } = require("../services/pdfService");
 const chunkText = require("../utils/chunkText");
-
 const index = require("../services/pineconeService");
-// const generateDummyVector = require("../utils/dummyEmbedding");
 
 const uploadPdf = async (req, res) => {
   try {
@@ -16,17 +14,16 @@ const uploadPdf = async (req, res) => {
 
     const filePath = req.file.path;
 
-    // Extract text
+    // Extract text from PDF
     const extractedText = await extractTextFromPDF(filePath);
 
     console.log("TEXT LENGTH:", extractedText.length);
 
-    // Create chunks
+    // Split into chunks
     const chunks = chunkText(extractedText);
 
     console.log("TOTAL CHUNKS:", chunks.length);
 
-    // Safety check
     if (chunks.length === 0) {
       return res.status(400).json({
         success: false,
@@ -34,33 +31,32 @@ const uploadPdf = async (req, res) => {
       });
     }
 
-    // Create vectors
+    // Generate embeddings
     const vectors = [];
 
     for (let i = 0; i < chunks.length; i++) {
-      console.log(
-        `Generating embedding ${i + 1}/${chunks.length}`
-    );
+      console.log(`Generating embedding ${i + 1}/${chunks.length}`);
 
-    const embedding = await generateEmbedding(
-      chunks[i]
-   );
+      const embedding = await generateEmbedding(chunks[i]);
 
-   vectors.push({
-    id: `chunk-${Date.now()}-${i}`,
-    values: embedding,
-    metadata: {
-      text: chunks[i].substring(0, 1000),
-    },
-  });
-}
+      console.log(`Embedding generated for chunk ${i + 1}`);
 
-await index.upsert(vectors);
+      vectors.push({
+        id: `chunk-${Date.now()}-${i}`,
+        values: embedding,
+        metadata: {
+          text: chunks[i].substring(0, 1000),
+        },
+      });
+    }
+
     console.log("VECTORS COUNT:", vectors.length);
     console.log("VECTOR LENGTH:", vectors[0].values.length);
 
-    // TEST WITH A SINGLE VECTOR FIRST
+    // Store in Pinecone
     await index.upsert(vectors);
+
+    console.log("PINECONE UPSERT SUCCESS");
 
     return res.status(200).json({
       success: true,

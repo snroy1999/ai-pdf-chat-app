@@ -1,4 +1,5 @@
 const index = require("../services/pineconeService");
+const { generateEmbedding } = require("../services/embeddingService");
 
 const askQuestion = async (req, res) => {
   try {
@@ -11,7 +12,7 @@ const askQuestion = async (req, res) => {
       });
     }
 
-    const { generateEmbedding } = require("../services/embeddingService");
+    
 
     const queryVector =
        await generateEmbedding(question);
