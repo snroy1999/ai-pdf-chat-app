@@ -1,6 +1,6 @@
 const index = require("../services/pineconeService");
 const { generateEmbedding } = require("../services/embeddingService");
-
+const { generateAnswer } = require("../services/llmService");
 const askQuestion = async (req, res) => {
   try {
     const { question } = req.body;
@@ -12,21 +12,27 @@ const askQuestion = async (req, res) => {
       });
     }
 
-    
-
-    const queryVector =
-       await generateEmbedding(question);
+    const queryVector = await generateEmbedding(question);
 
     const searchResults = await index.query({
       vector: queryVector,
       topK: 5,
       includeMetadata: true,
-    }); 
+    });
+
+    const context = searchResults.matches
+      .map((match) => match.metadata.text)
+      .join("\n\n");
+
+    const answer = await generateAnswer(
+      question,
+      context
+    );
 
     return res.status(200).json({
       success: true,
       question,
-      matches: searchResults.matches,
+      answer,
     });
   } catch (error) {
     console.error(error);
