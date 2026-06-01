@@ -16,7 +16,7 @@ const askQuestion = async (req, res) => {
 
     const searchResults = await index.query({
       vector: queryVector,
-      topK: 5,
+      topK: 8,
       includeMetadata: true,
     });
 
@@ -30,9 +30,12 @@ const askQuestion = async (req, res) => {
     );
 
     return res.status(200).json({
-      success: true,
-      question,
-      answer,
+       success: true,
+       question,
+       answer,
+       sourceChunks: searchResults.matches.map(
+         (match) => match.metadata.text
+       ),
     });
   } catch (error) {
     console.error(error);

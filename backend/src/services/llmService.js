@@ -9,8 +9,16 @@ const generateAnswer = async (question, context) => {
         messages: [
           {
             role: "system",
-            content:
-              "You are a helpful assistant. Answer ONLY using the provided context. If the answer is not present in the context, say 'I could not find the answer in the document.'",
+            content: `
+          You are a PDF assistant.
+
+          Answer questions using the provided context.
+
+          If the answer exists in the context, explain it clearly.
+
+          If the answer is not present in the context, say:
+          "I could not find the answer in the document."
+          `,
           },
           {
             role: "user",
