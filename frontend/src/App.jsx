@@ -11,6 +11,10 @@ function App() {
   const [asking, setAsking] = useState(false);
   const [pdfUploaded, setPdfUploaded] = useState(false);
 
+  // Day 11
+  const [documentId, setDocumentId] = useState("");
+  const [filename, setFilename] = useState("");
+
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
   };
@@ -31,13 +35,17 @@ function App() {
         `${import.meta.env.VITE_API_URL}/api/upload`,
         formData
       );
+      console.log(response.data);
 
       setMessage(response.data.message);
 
-      // New PDF uploaded successfully
+      // Day 11
+      setDocumentId(response.data.documentId);
+      setFilename(response.data.filename);
+
       setPdfUploaded(true);
 
-      // Clear previous conversation
+      // Clear previous chat when new PDF uploaded
       setChatHistory([]);
     } catch (error) {
       console.error(error);
@@ -77,11 +85,16 @@ function App() {
     } catch (error) {
       console.error(error);
 
+      const backendMessage =
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        "Failed to get answer";
+
       setChatHistory((prev) => [
         ...prev,
         {
           question,
-          answer: "Failed to get answer",
+          answer: backendMessage,
           sources: [],
         },
       ]);
@@ -122,6 +135,18 @@ function App() {
           <p className="mt-3 text-green-600">
             {message}
           </p>
+
+          {filename && (
+            <p className="mt-2 text-sm text-blue-600">
+              Current Document: {filename}
+            </p>
+          )}
+
+          {documentId && (
+            <p className="mt-1 text-xs text-gray-500">
+              Document ID: {documentId}
+            </p>
+          )}
         </div>
 
         {/* Question Section */}
