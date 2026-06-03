@@ -65,12 +65,18 @@ function App() {
     try {
       setAsking(true);
 
+      console.log({
+        question,
+        documentId,
+       });
+
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/chat/ask`,
-        {
-          question,
-        }
-      );
+          `${import.meta.env.VITE_API_URL}/api/chat/ask`,
+          {
+            question,
+            documentId,
+         }
+    );
 
       setChatHistory((prev) => [
         ...prev,
