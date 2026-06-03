@@ -42,7 +42,12 @@ const askQuestion = async (req, res) => {
       .map((match) => match.metadata.text)
       .join("\n\n");
 
-    console.log("CONTEXT LENGTH:", context.length);
+    console.log(
+       "CONTEXT LENGTH:",
+        context.length
+    );
+
+    // console.log("CONTEXT LENGTH:", context.length);
 
     const answer = await generateAnswer(
       question,

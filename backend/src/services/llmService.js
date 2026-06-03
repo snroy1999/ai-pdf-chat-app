@@ -12,7 +12,7 @@ const generateAnswer = async (question, context) => {
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
-        model: "moonshotai/kimi-k2:free",
+        model: "openai/gpt-oss-20b:free",
         messages: [
           {
             role: "system",
