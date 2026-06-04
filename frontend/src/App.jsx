@@ -16,6 +16,18 @@ function App() {
     setSelectedFile(e.target.files[0]);
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      if (
+           question.trim() &&
+           pdfUploaded &&
+           !asking
+          ) {
+            askQuestion();
+         }
+      }
+   };
+
   const uploadPdf = async () => {
     if (!selectedFile) {
       alert("Please select a PDF file");
@@ -144,14 +156,15 @@ function App() {
 
           <div className="flex gap-3">
             <input
-              type="text"
-              value={question}
-              onChange={(e) =>
-                setQuestion(e.target.value)
-              }
-              placeholder="Ask something about your PDF..."
-              className="border p-3 rounded w-full"
-            />
+               type="text"
+               value={question}
+               onChange={(e) =>
+               setQuestion(e.target.value)
+            }
+            onKeyDown={handleKeyPress}
+            placeholder="Ask something about your PDF..."
+            className="border p-3 rounded w-full"
+          />
 
             <button
               onClick={askQuestion}
